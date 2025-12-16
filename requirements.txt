@@ -11,3 +11,5 @@ numpy
 requests
 pydantic-settings
 transformers
+torch
+torchvision
