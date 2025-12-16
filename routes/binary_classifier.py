@@ -1,0 +1,81 @@
+from fastapi import APIRouter, UploadFile, File, HTTPException
+import tensorflow as tf
+import numpy as np
+from PIL import Image
+import io
+import os
+
+router = APIRouter(
+    prefix="/binary-classifier",
+    tags=["Binary Classification"]
+)
+
+IMG_SIZE = (224, 224)
+THRESHOLD = 0.5
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_PATH = os.path.join(
+    BASE_DIR,
+    "binary_classification",
+    "agro_classifier_FINAL_CLEAN.keras"
+)
+
+print("🔄 Loading binary classifier model...")
+print("📂 Path:", MODEL_PATH)
+
+try:
+    model = tf.keras.models.load_model(MODEL_PATH, compile=False)
+    print("✅ Binary classifier model loaded successfully")
+except Exception as e:
+    print("❌ Failed to load binary classifier:", e)
+    model = None
+
+
+@router.post("/predict")
+async def predict_binary(file: UploadFile = File(...)):
+    if model is None:
+        raise HTTPException(
+            status_code=500,
+            detail="Binary classifier model is not loaded."
+        )
+
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file type. Please upload an image."
+        )
+
+    try:
+        # Read and preprocess image
+        image_bytes = await file.read()
+        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        img = img.resize(IMG_SIZE)
+        img_array = np.asarray(img, dtype="float32") / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+
+        # Make prediction
+        pred = float(model.predict(img_array)[0][0])
+
+        # Determine result and confidence
+        if pred < THRESHOLD:
+            result = "plant_pest"
+            confidence = (1 - pred) * 100
+            is_valid = True
+            message = f"Plant pest detected with {confidence:.2f}% confidence."
+        else:
+            result = "invalid_image"
+            confidence = pred * 100
+            is_valid = False
+            message = "Please upload a clear plant pest image. Non-agricultural images are not supported."
+
+        # Return response compatible with frontend
+        return {
+            "status": "success",
+            "result": result,
+            "confidence": round(confidence, 2),
+            "is_valid": is_valid,
+            "message": message
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

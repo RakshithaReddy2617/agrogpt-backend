@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pymongo
+python-dotenv
+passlib[bcrypt]
+pyotp
+qrcode
+pillow
+tensorflow
+numpy
+requests

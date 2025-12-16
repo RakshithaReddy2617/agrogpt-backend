@@ -1,0 +1,21 @@
+# Virtual environments
+venv/
+.venv/
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Temp files
+tmp/
+
+# ML model files (IMPORTANT)
+*.keras
+*.h5
+*.pt
+*.pth
+*.safetensors
+merged_model/
