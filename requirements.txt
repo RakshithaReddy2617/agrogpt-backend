@@ -11,5 +11,5 @@ numpy
 requests
 pydantic-settings
 transformers
-torch==2.2.0+cpu
-torchvision
+torch==2.9.1
+torchvision==0.15.2
