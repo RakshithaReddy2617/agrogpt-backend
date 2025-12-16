@@ -320,3 +320,10 @@ async def predict(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+# =======================
+# Render-ready main
+# =======================
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=port) only this i should add right?
