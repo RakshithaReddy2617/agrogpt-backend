@@ -11,6 +11,9 @@ import random
 from fastapi import Form
 from datetime import datetime
 from dotenv import load_dotenv
+from utils.model_downloader import download_file
+from utils.config import MODEL_URLS
+
 #import torch
 #from transformers import AutoTokenizer, AutoModelForCausalLM
 from agrogpt_captioner import caption_image
@@ -21,6 +24,19 @@ from agrogpt_captioner import caption_image
 from routes.binary_classifier import router as binary_classifier_router
 from routes.chat import router as chat_router
 
+def ensure_models():
+    # Binary classifier
+    bc = MODEL_URLS["binary_classifier"]
+    download_file(bc["url"], bc["path"])
+
+    # Merged model
+    mm = MODEL_URLS["merged_model"]
+    for filename, file_id in mm["files"].items():
+        url = f"https://drive.google.com/uc?id={file_id}"
+        path = os.path.join(mm["dir"], filename)
+        download_file(url, path)
+
+ensure_models()
 
 app = FastAPI()
 app.include_router(binary_classifier_router)
