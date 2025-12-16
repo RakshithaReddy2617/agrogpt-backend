@@ -10,3 +10,4 @@ tensorflow
 numpy
 requests
 pydantic-settings
+transformers
