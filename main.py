@@ -36,10 +36,14 @@ def ensure_models():
         path = os.path.join(mm["dir"], filename)
         download_file(url, path)
 
-ensure_models()
 
 app = FastAPI()
+@app.get("/healthz")
+def health_check():
+    return {"status": "ok"}
+
 app.include_router(binary_classifier_router)
+
 
 
 # ─── CORS CONFIG ───
@@ -320,6 +324,3 @@ async def predict(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-@app.get("/healthz")
-def health_check():
-    return {"status": "ok"}

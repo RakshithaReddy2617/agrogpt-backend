@@ -5,6 +5,9 @@ from PIL import Image
 import io
 import os
 
+from utils.model_downloader import download_file
+from utils.config import MODEL_URLS
+
 router = APIRouter(
     prefix="/binary-classifier",
     tags=["Binary Classification"]
@@ -20,21 +23,27 @@ MODEL_PATH = os.path.join(
     "agro_classifier_FINAL_CLEAN.keras"
 )
 
-# Model will be loaded lazily
 model = None
 
 
 def load_model_once():
     global model
-    if model is None:
-        try:
-            print("🔄 Loading binary classifier model...")
-            print("📂 Path:", MODEL_PATH)
-            model = tf.keras.models.load_model(MODEL_PATH, compile=False)
-            print("✅ Binary classifier model loaded successfully")
-        except Exception as e:
-            print("❌ Failed to load binary classifier:", e)
-            model = None
+
+    if model is not None:
+        return
+
+    # 🔹 Ensure model file exists (lazy download)
+    bc = MODEL_URLS["binary_classifier"]
+    download_file(bc["url"], bc["path"])
+
+    try:
+        print("🔄 Loading binary classifier model...")
+        print("📂 Path:", MODEL_PATH)
+        model = tf.keras.models.load_model(MODEL_PATH, compile=False)
+        print("✅ Binary classifier model loaded successfully")
+    except Exception as e:
+        print("❌ Failed to load binary classifier:", e)
+        model = None
 
 
 @router.post("/predict")
