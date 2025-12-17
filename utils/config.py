@@ -24,7 +24,7 @@ settings = Settings()
 
 MODEL_URLS = {
     "binary_classifier": {
-        "url": "https://drive.google.com/drive/folders/1QuLVfkkIT-tcVWdxj-oqDdIN7qZ1HT80?usp=sharing",
+        "url": "https://drive.google.com/file/d/1wV5OFj6k9uC_A--6fYfh-vyOu-TgN6dO/view?usp=sharing",
         "path": "binary_classification/agro_classifier_FINAL_CLEAN.keras"
     },
     "merged_model": {
