@@ -6,7 +6,7 @@ passlib[bcrypt]
 pyotp
 qrcode
 pillow
-tensorflow
+tensorflow-cpu
 numpy
 requests
 pydantic-settings
