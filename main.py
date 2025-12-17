@@ -144,6 +144,15 @@ def register(data: SigninModel = Body(...)):
         return {"status": "exists"}
     users.insert_one({"email": data.email, "password": bcrypt.hash(data.password), "totp_secret": pyotp.random_base32()})
     return {"status": "success"}
+    
+@app.get("/get-qr/{email}")
+def get_qr(email: str):
+    file_path = os.path.join(tmp_dir, f"{email}_qr.png")
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="QR not found")
+
+    return FileResponse(file_path, media_type="image/png")
 
 @app.post("/verify-totp")
 def verify_login(data: VerifyTOTPModel = Body(...)):
