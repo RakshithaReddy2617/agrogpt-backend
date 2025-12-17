@@ -144,15 +144,32 @@ def register(data: SigninModel = Body(...)):
         return {"status": "exists"}
     users.insert_one({"email": data.email, "password": bcrypt.hash(data.password), "totp_secret": pyotp.random_base32()})
     return {"status": "success"}
-    
-@app.get("/get-qr/{email}")
-def get_qr(email: str):
+
+@app.get("/generate-qr/{email}")
+def generate_qr(email: str):
+    user = users.find_one({"email": email})
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    secret = user["totp_secret"]
+
+    totp = pyotp.TOTP(secret)
+    uri = totp.provisioning_uri(
+        name=email,
+        issuer_name="AgroGPT"
+    )
+
+    img = qrcode.make(uri)
+
     file_path = os.path.join(tmp_dir, f"{email}_qr.png")
+    img.save(file_path)
 
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="QR not found")
-
-    return FileResponse(file_path, media_type="image/png")
+    return {
+        "status": "success",
+        "qr_url": f"/get-qr/{email}",
+        "manual_key": secret
+    }
 
 @app.post("/verify-totp")
 def verify_login(data: VerifyTOTPModel = Body(...)):
