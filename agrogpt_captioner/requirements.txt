@@ -1,5 +1,9 @@
-torch
-torchvision
-transformers
-accelerate
+fastapi
+uvicorn
 pillow
+pymongo
+python-dotenv
+passlib[bcrypt]
+pyotp
+qrcode
+tensorflow-cpu   # only if using your binary classifier

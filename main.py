@@ -36,6 +36,9 @@ def ensure_models():
         path = os.path.join(mm["dir"], filename)
         download_file(url, path)
 app = FastAPI()
+@app.get("/healthz")
+def health_check():
+ return {"status": "ok"}
 
 app.include_router(binary_classifier_router)
 
