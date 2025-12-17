@@ -17,24 +17,24 @@ from utils.config import MODEL_URLS
 # BLIP captioner (can be stubbed later if disabled)
 #from agrogpt_captioner import caption_image
 
-try:
-    from routes.binary_classifier import router as binary_classifier_router
-    app.include_router(binary_classifier_router)
-except Exception as e:
-    print("Binary classifier disabled:", e)
-
-from routes.chat import router as chat_router
 
 # ─────────────────────────────
 # App init
 # ─────────────────────────────
 app = FastAPI()
+# --- Optional Binary Classifier (disabled on Railway) ---
+try:
+    from routes.binary_classifier import router as binary_classifier_router
+    app.include_router(binary_classifier_router)
+    print("Binary classifier enabled")
+except Exception as e:
+    print("Binary classifier disabled:", e)
 
 @app.get("/healthz")
 def health_check():
     return {"status": "ok"}
 
-app.include_router(binary_classifier_router)
+#app.include_router(binary_classifier_router)
 app.include_router(chat_router)
 
 # ─────────────────────────────
