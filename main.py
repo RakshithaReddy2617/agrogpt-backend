@@ -35,7 +35,7 @@ def health_check():
     return {"status": "ok"}
 
 #app.include_router(binary_classifier_router)
-app.include_router(chat_router)
+#app.include_router(chat_router)
 
 # ─────────────────────────────
 # CORS
