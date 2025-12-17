@@ -9,3 +9,4 @@ pillow
 requests
 pydantic
 pydantic-settings
+python-multipart
