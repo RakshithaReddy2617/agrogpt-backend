@@ -22,6 +22,10 @@ from utils.config import MODEL_URLS
 # App init
 # ─────────────────────────────
 app = FastAPI()
+@app.get("/")
+def root():
+    return {"message": "AgroGPT backend running"}
+
 # --- Optional Binary Classifier (disabled on Railway) ---
 try:
     from routes.binary_classifier import router as binary_classifier_router
@@ -86,11 +90,7 @@ def ensure_models():
 
 @app.on_event("startup")
 def startup_event():
-    # IMPORTANT: keeps Render/Railway happy without blocking port binding
-    try:
-        ensure_models()
-    except Exception as e:
-        print("Model download skipped:", e)
+    print("Startup: skipping heavy model downloads")
 
 # ─────────────────────────────
 # SCHEMAS
@@ -127,9 +127,6 @@ chat_translations = {
     "hi": {"default": "मैं AgroGPT हूँ", "plantHealthy": "पौधा स्वस्थ है", "nitrogenDeficiency": "नाइट्रोजन की कमी", "pestDetected": "कीट पाए गए", "userEcho": "आपने कहा: "},
     "te": {"default": "నేను AgroGPT", "plantHealthy": "పంట ఆరోగ్యంగా ఉంది", "nitrogenDeficiency": "నైట్రోజన్ లోపం", "pestDetected": "కీటకాలు ఉన్నాయి", "userEcho": "మీరు చెప్పింది: "},
 }
-@app.get("/")
-def root():
-    return {"message": "AgroGPT backend running"}
 
 # ─────────────────────────────
 # AUTH & CHAT ENDPOINTS (UNCHANGED LOGIC)
