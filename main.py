@@ -15,9 +15,14 @@ from utils.model_downloader import download_file
 from utils.config import MODEL_URLS
 
 # BLIP captioner (can be stubbed later if disabled)
-from agrogpt_captioner import caption_image
+#from agrogpt_captioner import caption_image
 
-from routes.binary_classifier import router as binary_classifier_router
+try:
+    from routes.binary_classifier import router as binary_classifier_router
+    app.include_router(binary_classifier_router)
+except Exception as e:
+    print("Binary classifier disabled:", e)
+
 from routes.chat import router as chat_router
 
 # ─────────────────────────────
@@ -181,7 +186,8 @@ async def predict(prompt: str = Form(...), image: UploadFile = File(...), email:
     with open(path, "wb") as f:
         f.write(await image.read())
 
-    caption = caption_image(path)
+    caption = "Image analysis temporarily unavailable"
+
     answer = f"Image analysis completed: {caption}"
 
     chats.insert_one({"email": email, "title": "Image Analysis", "message": prompt, "response": answer, "timestamp": datetime.utcnow()})
