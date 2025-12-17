@@ -127,6 +127,9 @@ chat_translations = {
     "hi": {"default": "मैं AgroGPT हूँ", "plantHealthy": "पौधा स्वस्थ है", "nitrogenDeficiency": "नाइट्रोजन की कमी", "pestDetected": "कीट पाए गए", "userEcho": "आपने कहा: "},
     "te": {"default": "నేను AgroGPT", "plantHealthy": "పంట ఆరోగ్యంగా ఉంది", "nitrogenDeficiency": "నైట్రోజన్ లోపం", "pestDetected": "కీటకాలు ఉన్నాయి", "userEcho": "మీరు చెప్పింది: "},
 }
+@app.get("/")
+def root():
+    return {"message": "AgroGPT backend running"}
 
 # ─────────────────────────────
 # AUTH & CHAT ENDPOINTS (UNCHANGED LOGIC)
